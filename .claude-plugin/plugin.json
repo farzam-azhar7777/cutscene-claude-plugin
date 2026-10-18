@@ -3,9 +3,22 @@
   "displayName": "Cutscene",
   "version": "0.2.0",
   "description": "Turn what your coding agent just built into a narrated demo video: writes the demo context and sends it to your Cutscene account, where the Chrome extension writes the script and records.",
-  "author": { "name": "Cutscene", "url": "https://trycutscene.com" },
+  "author": {
+    "name": "Cutscene",
+    "url": "https://trycutscene.com"
+  },
   "homepage": "https://trycutscene.com",
   "repository": "https://github.com/farzam-azhar7777/cutscene-claude-plugin",
   "license": "MIT",
-  "keywords": ["demo", "demo video", "video", "screen recording", "walkthrough", "product demo", "chrome"]
+  "keywords": [
+    "demo",
+    "demo video",
+    "video",
+    "screen recording",
+    "walkthrough",
+    "product demo",
+    "chrome"
+  ],
+  "documentationUrl": "https://github.com/farzam-azhar7777/cutscene-claude-plugin#readme",
+  "supportUrl": "https://github.com/farzam-azhar7777/cutscene-claude-plugin/issues"
 }
