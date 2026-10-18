@@ -1,0 +1,17 @@
+{
+  "name": "cutscene",
+  "owner": { "name": "Cutscene", "url": "https://trycutscene.com" },
+  "metadata": {
+    "description": "The Cutscene plugin for Claude Code: ask for a demo of what you just built and Cutscene records it in your own signed-in app."
+  },
+  "plugins": [
+    {
+      "name": "cutscene",
+      "source": "./",
+      "description": "Turn what your coding agent just built into a narrated demo video recorded in your own signed-in app.",
+      "version": "0.2.0",
+      "category": "productivity",
+      "homepage": "https://trycutscene.com"
+    }
+  ]
+}

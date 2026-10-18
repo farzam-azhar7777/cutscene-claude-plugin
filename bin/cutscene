@@ -1,0 +1,24 @@
+#!/usr/bin/env node
+"use strict";
+
+// Kept as plain CommonJS so an old Node prints a clear message instead of a
+// syntax error from the ES modules in ../lib.
+const [major] = process.versions.node.split(".").map(Number);
+if (major < 18) {
+  process.stderr.write(`cutscene needs Node 18 or newer (this is ${process.versions.node}).\n`);
+  process.exit(1);
+}
+
+const path = require("node:path");
+const { pathToFileURL } = require("node:url");
+
+const entry = pathToFileURL(path.join(__dirname, "..", "lib", "cli.mjs")).href;
+import(entry)
+  .then(({ main }) => main(process.argv.slice(2)))
+  .then((code) => {
+    process.exitCode = code;
+  })
+  .catch((error) => {
+    process.stderr.write(`cutscene: unexpected error: ${error && error.message ? error.message : error}\n`);
+    process.exitCode = 1;
+  });
