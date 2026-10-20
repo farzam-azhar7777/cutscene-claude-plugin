@@ -54,6 +54,11 @@ Start from what you did in this conversation; git fills the gaps.
    framework default. If you are not sure, ask the user. Never guess a port.
 4. If the change has nothing a viewer can see in a browser (a library, a CLI,
    a migration only), say so and ask the user what the demo should show.
+5. Work out who will watch the video and why the change matters to them,
+   from this conversation (a client who asked for it, the team, the
+   reviewers of a pull request, customers). Use only names the user gave;
+   never guess one. Cutscene's video opens by greeting them by that name
+   and closes with a next step that fits them.
 
 ## 3. Write the context
 
@@ -64,6 +69,11 @@ Write it to a new temporary file (`mktemp -t cutscene.XXXXXX`). Use this shape:
 
 <One to three sentences: what changed for the user and why it matters.
 Product language, not code.>
+
+## Who it's for
+- For: <who will watch: "Dana at Northwind (the client who asked for it)",
+  "the reviewers of PR #128", "the team", "new customers">
+- Why it matters to them: <the problem it solves for them, in their words>
 
 ## Where to see it
 - Start at: <exact app URL>
@@ -84,6 +94,8 @@ Product language, not code.>
 Rules:
 
 - 120 to 400 words and 3 to 10 steps. The hard limit is 20 KB.
+- Always write "Who it's for". When the conversation does not say who will
+  watch, write "For: not named" and ask about it in step 4.
 - Quote exact visible labels ("Export CSV") so the recorder finds them.
 - Start on the app URL. Write steps 3 to 5 of the shape above only when the
   flow needs them; most demos stay in one app.
@@ -111,7 +123,9 @@ the exact payload, including the metadata the CLI adds: repo, branch, commit,
 changed file paths (never contents) and the app URL.
 
 Show the user the title, the body as markdown and that metadata, then ask:
-"Send this to Cutscene?" Wait for a clear yes. If they want changes, edit the
+"Send this to Cutscene?" Wait for a clear yes. When "For" says "not named",
+add: "Who will watch it? Give me a name (a client, your team) and the video
+greets them; otherwise it opens with a general hello." If they want changes, edit the
 file and show it again. Never send without their yes.
 
 If the dry run stops because the text looks like it contains a secret, remove
@@ -123,11 +137,11 @@ Run `cutscene send --app-url "<app URL>" --file <path>`, then delete the file.
 
 - Exit 0: tell the user: "Sent. Open <app URL> in Chrome, then open the
   Cutscene side panel (the Cutscene icon in the toolbar). Your context is
-  waiting under **Latest from Claude Code**: review the script there, then
+  waiting there, marked **From Claude Code**: review the script, then
   record." If the demo uses other sites, add: "Open <each other address> in
   the same Chrome window first, then choose those tabs under **Use other tabs
   too** before writing the script."
 - Exit 3: do step 1 to sign in, then run the same send once more.
 - Exit 4: Cutscene is not reachable. Keep the file, tell the user, and offer
-  to send again when the web app is running.
+  to send again when Cutscene is reachable.
 - Exit 1 or 2: show the CLI's message; fix the input if it says how.

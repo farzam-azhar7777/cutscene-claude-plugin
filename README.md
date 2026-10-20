@@ -6,8 +6,9 @@ and sends it to your Cutscene account once you say yes. The Cutscene Chrome
 extension then writes a narrated script from it and records the demo in your
 own signed-in browser. You get one video and one share link.
 
-Cutscene is free for 10 minutes of video a month (reset on the 1st). Paid
-plans are on [trycutscene.com](https://trycutscene.com/#pricing).
+Cutscene is free for 10 minutes of AI demos a month (reset on the 1st), and
+recording yourself uses no minutes. Paid plans, and how long each plan keeps
+videos, are on [trycutscene.com](https://trycutscene.com/#pricing).
 
 ## What you need
 
@@ -48,14 +49,14 @@ or just ask: "make a demo video of this". You can name what to show:
 
 1. The first time, Claude signs you in. A code appears in the terminal and
    your browser opens Cutscene's approval page. Check that the codes match
-   and choose Connect. No password or token is typed into the terminal.
+   and choose Yes, connect. No password or token is typed into the terminal.
 2. Claude reads what changed (git status, log and the list of changed files)
    and writes the demo context: a title, a few sentences, the start URL and
    3 to 10 steps with the exact button labels.
 3. You see the exact title, text and metadata that would be sent. Nothing
    goes out until you say yes.
-4. Open your app in Chrome, open the Cutscene side panel and pick the context
-   under "Latest from Claude Code". Review the script there, then record.
+4. Open your app in Chrome and open the Cutscene side panel. The context is
+   waiting there, marked "From Claude Code". Review the script, then record.
 
 A demo can continue in another tab you have open (say, a payment provider's
 test dashboard), wait until a result shows up, and hand you the steps only a
@@ -74,15 +75,18 @@ The plugin talks to one site: `https://trycutscene.com`, under `/api/v1`.
 
 The demo context is:
 
-- A title and a short description written for a viewer: what changed, the
-  start URL, the steps to show. At most 20 KB.
+- A title and a short description written for a viewer: what changed, who
+  the video is for and why it matters to them, the start URL, the steps to
+  show. At most 20 KB.
 - Metadata: repository name (host/owner/name, with any login stripped),
   branch, commit, the paths of changed files, the app URL and the plugin
   version.
 
-Never sent: source code, diffs, file contents, environment values, test
-logins or customer data. If the text looks like it contains a password, key
-or token, the tool refuses to send it.
+Not sent: Claude is told never to include source code, diffs, file contents,
+environment values, test logins or customer data, and you see everything
+before it is sent. The metadata never holds file contents or diffs. If the
+text looks like it contains a password, key or token, the tool refuses to
+send it.
 
 How Cutscene stores and deletes this data: [privacy policy](https://trycutscene.com/privacy).
 Terms: [trycutscene.com/terms](https://trycutscene.com/terms).
@@ -154,4 +158,4 @@ in this repository.
 ## License
 
 The plugin in this repository is MIT licensed (see `LICENSE`). The Cutscene
-service, web app and Chrome extension are not part of this license.
+service, website and Chrome extension are not part of this license.

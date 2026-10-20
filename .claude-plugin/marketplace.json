@@ -9,7 +9,7 @@
       "name": "cutscene",
       "source": "./",
       "description": "Turn what your coding agent just built into a narrated demo video recorded in your own signed-in app.",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "category": "productivity",
       "homepage": "https://trycutscene.com"
     }

@@ -1,7 +1,7 @@
 {
   "name": "cutscene",
   "displayName": "Cutscene",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Turn what your coding agent just built into a narrated demo video: writes the demo context and sends it to your Cutscene account, where the Chrome extension writes the script and records.",
   "author": {
     "name": "Cutscene",
