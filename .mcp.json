@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "cutscene": {
+      "type": "http",
+      "url": "https://trycutscene.com/mcp"
+    }
+  }
+}

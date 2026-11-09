@@ -14,13 +14,12 @@ videos, are on [trycutscene.com](https://trycutscene.com/#pricing).
 
 ## What you need
 
-- Claude Code, and Node 18 or newer on your `PATH`
+- Claude Code (terminal, IDE extensions or the desktop app's Code tab)
 - Google Chrome with the [Cutscene extension](https://chromewebstore.google.com/detail/cutscene/bheofgkkeaedknlnkaejmlgdimmphcbd)
 - A Cutscene account. You can create one during the first sign-in.
 
-The plugin works in Claude Code (terminal, IDE extensions and the desktop
-app's Code tab). It does not run in claude.ai chat or Cowork, because it ships
-a small command-line tool.
+The plugin is a skill and a connection to Cutscene's server. It ships no
+programs: nothing to install besides the plugin itself.
 
 ## Install
 
@@ -37,6 +36,18 @@ Or, inside a Claude Code session:
 ```
 
 Then run `/reload-plugins`, or start a new session.
+
+## Sign in (once)
+
+Run `/mcp` in Claude Code, choose `plugin:cutscene:cutscene`, then
+Authenticate. Your browser opens Cutscene: sign in if you need to, check that
+it says Claude Code wants to send demos to your Cutscene, and choose Allow.
+If you ask for a demo before signing in, Claude tells you these same steps.
+
+Nothing is typed into the terminal and no file with a key is written on your
+computer: Claude Code keeps the sign-in in its own secure storage. The
+connection shows under Connected apps in Cutscene settings, where Disconnect
+ends it.
 
 ## Update
 
@@ -61,33 +72,29 @@ After Claude has built something in a session, run:
 or just ask: "make a demo video of this". You can name what to show:
 `/cutscene:demo the new invoice export`.
 
-1. Claude reads this session (what you asked, what it built, the files it
-   changed), the code behind the pages and your git branch, all on your
-   computer. It writes the demo notes: one chapter per part of the work, each
-   with its start page and steps like "Click "Mark as paid" (button). Expect
-   a dialog ...". There is no word limit; the notes can be up to 20 KB.
+1. Claude reads this session's record (what you asked, what it said it
+   built, the addresses it used), your git branch and the code behind the
+   pages, all on your computer. It writes the demo notes: one chapter per
+   part of the work, each with its start page and steps like "Click "Mark as
+   paid" (button). Expect a dialog ...". There is no word limit; the notes
+   can be up to 20 KB.
 2. It checks that the pages answer on your computer (loads, needs sign-in,
    not found) and fixes addresses that are wrong.
 3. It asks you something only when it cannot tell from the session or the
    code, for example which address to record on when you ask for production.
-4. You see a summary (title, who it is for, where it starts, the chapters,
-   and what else goes with them). Choose Send, Show full text (every line
-   and detail) or Change something. Nothing goes out until you choose Send.
-5. Chrome opens and the notes show in the Cutscene panel. If the panel is
-   already open on your app, it takes the notes and goes to the start page by
-   itself; otherwise press the Cutscene icon (or Control+Shift+C on a Mac,
-   Alt+Shift+C elsewhere). Press Write script: the script is written, voiced
-   and recorded without more clicks.
+   Every question comes with the option it recommends first.
+4. Cutscene saves the notes as a draft (nothing is sent to the panel yet)
+   and Claude shows you a summary: title, account, where it starts, the
+   chapters, the page check and what else goes with the notes. Choose Send,
+   Show full text (every line and detail) or Change something. Nothing goes
+   to your panel until you choose Send.
+5. On a Mac (and on Linux) Chrome opens and the notes show in the Cutscene
+   panel; elsewhere open the link Claude gives you. Press Write script: the
+   script is written, voiced and recorded without more clicks.
 
-The first time, Claude signs you in: a code appears in the terminal and
-Chrome opens Cutscene's approval page. Check that the codes match and choose
-Yes, connect. No password or token is typed into the terminal.
-
-Change something after sending, and Claude asks whether to send the
-updated demo; the panel shows the new version in place of the old one, and
-recording it keeps the link you already shared. The
-first time Claude starts the demo skill by itself, Claude Code asks once
-whether it may use it.
+Change something after sending, and Claude asks whether to send the updated
+demo; the panel shows the new version in place of the old one, and recording
+it keeps the link you already shared.
 
 A demo can continue in another tab you have open (say, a payment provider's
 test dashboard), wait until a result shows up, and hand you the steps only a
@@ -95,110 +102,66 @@ person can do, like attaching a file.
 
 ## What is sent, and where
 
-The plugin talks to one site: `https://trycutscene.com`, under `/api/v1`.
+The plugin talks to one server: `https://trycutscene.com/mcp` (Cutscene's MCP
+server), signed in with OAuth.
 
-| When | Request | What it carries |
+| When | Tool | What it carries |
 | --- | --- | --- |
-| Sign-in | `POST /device_authorizations`, then `POST /device_authorizations/token` | A device name for your Connected apps list ("Claude Code on" plus your computer's name; change it with `cutscene login --name`) |
-| Status | `GET /me` | Your token, to show which account is signed in |
-| Send | `POST /contexts` | The demo notes below |
-| After sending | `GET /contexts/<id>`, up to 6 times in 6 seconds | Asks whether the Cutscene panel has the notes, to tell you what to press |
-| Sign-out | `DELETE /token` | Revokes this computer's token |
+| Before the summary | `cutscene_prepare` | The demo notes below; Cutscene checks them for passwords, keys and tokens and keeps them as a draft for 24 hours |
+| After you choose Send | `cutscene_send` | The draft's id: the panel gets exactly the notes you saw |
+| To update a demo | `cutscene_list_demos` | Nothing: lists the demos you sent from Claude Code |
+| When you ask whether Cutscene is set up | `cutscene_status` | Nothing: answers your account, plan, minutes left and whether the extension is connected |
 
 The demo notes are:
 
 - What a viewer needs: a title, a short description, who the video is for,
   where to start, and the chapters with their steps. At most 20 KB.
-- Metadata: repository name (host/owner/name, with any login stripped),
-  branch, commit, the paths of changed files (most useful first; images,
-  fonts, lockfiles and build output only counted), the app URL, the result
-  for each page the check got an answer from (loads, needs sign-in, not
-  found, ...), the plugin version, and this Claude Code session's id (so an
-  update replaces the notes it sent before).
+- With them: the repository name (host/owner/name, with any login left out),
+  the branch, the paths of changed files (names only, most useful first;
+  images, fonts, lockfiles and build output left out) and the result of the
+  page check for each page (loads, needs sign-in, not found, ...).
 
 Not sent: Claude is told never to include source code, diffs, file contents,
-environment values, test logins or customer data. Before you choose Send
-you see a summary, and Show full text shows every line and every detail
-that goes with it. The session transcript is read on your computer to write
-the notes and is never sent. The metadata never holds file contents or
-diffs. If the text looks like it contains a password, key or token, the tool
-refuses to send it.
+environment values, test logins or customer data. Before you choose Send you
+see a summary, and Show full text shows every line and every detail that
+goes with it. If the text looks like it contains a password, key or token,
+Cutscene refuses to save it. The session record is read on your computer to
+write the notes and is never sent.
 
 How Cutscene stores and deletes this data: [privacy policy](https://trycutscene.com/privacy).
 Terms: [trycutscene.com/terms](https://trycutscene.com/terms).
 
 ## What runs on your computer
 
-- `bin/cutscene`, a Node script with no dependencies and no build step. The
-  source in `lib/` is the code that runs. It finds Node 18 or newer on your
-  `PATH` or from asdf, nvm, volta, fnm, mise or Homebrew.
-- `bin/cutscene-facts`, run when you ask for a demo: it reads this session's
-  transcript in `~/.claude/projects` (what you typed, what Claude said it
-  did, the files it changed and the commands it ran, never their output or
-  file contents), plus git and your dev-server settings, and gives Claude a
-  summary of at most 24,000 characters. Lines that look like a password, key
-  or token are left out. Nothing from it is sent anywhere.
-- Read-only git commands (`rev-parse`, `symbolic-ref`, `config --get
-  remote.origin.url`, `merge-base`, `diff --name-only`, `diff --numstat`,
-  `diff-tree`, `log`, `status --porcelain`) for the facts and the metadata.
-- Page checks (`cutscene check-urls`): plain GET requests to addresses on
-  this computer only (localhost, *.localhost, 127.0.0.1, [::1]), at most 25
-  per check, without cookies or your Cutscene token. Addresses that could
-  sign you out or change data (logout, delete, pay, ...) are not opened.
-- Google Chrome opens the approval page during sign-in and the demo after
-  sending (`open -b com.google.Chrome` on macOS, Chrome's own launcher on
-  Windows and Linux; your default browser if Chrome is not found). Set
-  `CUTSCENE_BROWSER` to use another browser, or `CUTSCENE_NO_BROWSER=1` to
-  print the address instead.
-- The notes on their way to the command-line tool: Claude saves them to
-  `~/.config/cutscene/notes/<session>.md`, and the dry run reads that file
-  and deletes it at once.
-- Drafts: a dry run saves the exact notes it showed in
-  `~/.config/cutscene/drafts` (mode 0600, kept 24 hours, at most 20), so what
-  you approved is what is sent. The sign-in is saved in
-  `~/.config/cutscene/credentials.json` with mode 0600 in a 0700 folder. The
-  token is never printed.
+The plugin ships no programs, hooks or scripts. While you ask for a demo,
+the skill lets Claude use these without asking you each time:
 
-The plugin has no hooks and no MCP server. It only runs when you ask for a
-demo.
+- Claude's own Read, Grep and Glob tools on this session's record in
+  `~/.claude/projects` (searching what you asked and what Claude said it
+  built; never sent anywhere).
+- Read-only git commands: `status`, `log`, `diff`, `show`, `rev-parse`,
+  `merge-base`, `branch`, `symbolic-ref`, `config --get remote.origin.url`,
+  `grep`, `ls-files`.
+- The page check: `curl -s -o /dev/null` to addresses on this computer only
+  (localhost, 127.0.0.1), one GET each with a time limit, without cookies.
+  It prints only the status code and where a redirect goes. Addresses that
+  could sign you out or change data (logout, delete, pay, ...) are not
+  opened.
+- After you choose Send, opening the panel link
+  (`https://trycutscene.com/go/...`) in Chrome: `open -b com.google.Chrome`
+  on macOS, `xdg-open` on Linux.
+- The four Cutscene tools above.
 
-## The command-line tool
-
-The skill drives `bin/cutscene`; you can run it yourself too.
-
-```
-cutscene login        Connect this computer to your Cutscene account
-cutscene send         Send demo notes (markdown or JSON on stdin, --file or --body)
-cutscene check-urls   Check that pages answer on this computer
-cutscene status       Show which account is signed in
-cutscene logout       Sign out and revoke this computer's token
-```
-
-`cutscene send --dry-run` checks the pages, saves a draft and prints what it
-holds; `cutscene send --draft <id>` sends exactly that draft. Every command
-takes `--help`.
-
-| Variable | Default | Purpose |
-| --- | --- | --- |
-| `CUTSCENE_URL` | `https://trycutscene.com` | The Cutscene site. Must be `https://` except on localhost. |
-| `CUTSCENE_CONFIG_DIR` | `~/.config/cutscene` | Where the sign-in and drafts are kept. |
-| `CUTSCENE_BROWSER` | Google Chrome | Another browser to open pages in (an app name or bundle id on macOS, a program path elsewhere). |
-| `CUTSCENE_NO_BROWSER` | unset | Set to `1` to print addresses instead of opening them. |
-| `CUTSCENE_NODE` | found for you | The Node 18+ program to run the plugin with. |
-
-Exit codes: 0 done, 1 failed, 2 wrong usage, 3 not signed in, 4 Cutscene
-unreachable, 130 cancelled.
+If the page check finds your app is not running and you choose "Start it for
+me", Claude Code asks you before it runs your dev command.
 
 ## Security
 
-- Sign-in is the device flow (RFC 8628): you approve this computer in the
-  browser.
-- The token is only sent to the site that issued it, over HTTPS. If
-  `CUTSCENE_URL` points somewhere else, the tool stops and asks you to sign
-  in there. Redirects are never followed.
-- `cutscene logout` revokes the token on the server and deletes the file.
-  Each computer also appears under Connected apps in Cutscene settings, where
-  you can revoke it.
+- Sign-in is OAuth 2.1 with PKCE in your browser. You approve Claude Code on
+  Cutscene's own page; the plugin never sees your password or reads a key
+  from your computer.
+- Disconnect it any time under Connected apps in Cutscene settings, or
+  clear it in Claude Code with `/mcp`.
 
 ## Uninstall
 
@@ -206,8 +169,8 @@ unreachable, 130 cancelled.
 claude plugin uninstall cutscene@cutscene
 ```
 
-Run `cutscene logout` first if you want the token revoked as well, or revoke
-it under Connected apps in Cutscene settings.
+Disconnect it under Connected apps in Cutscene settings if you want the
+sign-in ended as well.
 
 ## Support
 

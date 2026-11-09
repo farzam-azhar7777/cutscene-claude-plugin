@@ -1,13 +1,14 @@
 {
   "name": "cutscene",
   "displayName": "Cutscene",
-  "version": "0.3.0",
-  "description": "Turn what your coding agent just built into a narrated demo video: writes complete demo notes from the session, checks the pages, and hands them to the Cutscene panel in Chrome, which writes the script and records it.",
+  "version": "0.4.0",
+  "description": "Turn what your coding agent just built into a narrated demo video: writes complete demo notes from the session and the code, checks the pages, and after you choose Send hands them to the Cutscene panel in Chrome, which writes the script and records it.",
   "author": {
     "name": "Cutscene",
+    "email": "hello@trycutscene.com",
     "url": "https://trycutscene.com"
   },
-  "homepage": "https://trycutscene.com",
+  "homepage": "https://trycutscene.com/claude-code",
   "repository": "https://github.com/farzam-azhar7777/cutscene-claude-plugin",
   "license": "MIT",
   "keywords": [
@@ -19,6 +20,9 @@
     "product demo",
     "chrome"
   ],
-  "documentationUrl": "https://github.com/farzam-azhar7777/cutscene-claude-plugin#readme",
-  "supportUrl": "https://github.com/farzam-azhar7777/cutscene-claude-plugin/issues"
+  "icon": "./.claude-plugin/icon.png",
+  "documentationUrl": "https://trycutscene.com/claude-code",
+  "supportUrl": "https://github.com/farzam-azhar7777/cutscene-claude-plugin/issues",
+  "privacyPolicyUrl": "https://trycutscene.com/privacy",
+  "termsOfServiceUrl": "https://trycutscene.com/terms"
 }
