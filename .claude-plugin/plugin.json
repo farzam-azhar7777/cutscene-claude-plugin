@@ -1,7 +1,7 @@
 {
   "name": "cutscene",
   "displayName": "Cutscene",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Turn what your coding agent just built into a narrated demo video: writes complete demo notes from the session and the code, checks the pages, and after you choose Send hands them to the Cutscene panel in Chrome, which writes the script and records it.",
   "author": {
     "name": "Cutscene",

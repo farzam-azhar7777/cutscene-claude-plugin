@@ -1,0 +1,19 @@
+#!/bin/sh
+# Session facts for /cutscene:demo (see lib/facts.mjs). Runs before Claude
+# reads the skill, so it ALWAYS exits 0: a failing command would stop the
+# whole skill. Any problem becomes one plain line instead.
+unavailable() {
+  printf 'Session facts unavailable: %s. Use the conversation and git.\n' "$1"
+  exit 0
+}
+cutscene_dir=$(CDPATH='' cd -- "$(dirname -- "$0")" 2>/dev/null && pwd) || unavailable "the plugin folder could not be found"
+[ -f "$cutscene_dir/../lib/find-node.sh" ] || unavailable "the plugin files are incomplete"
+. "$cutscene_dir/../lib/find-node.sh"
+cutscene_node=$(cutscene_find_node) || unavailable "Node 18 or newer was not found"
+cutscene_out=$("$cutscene_node" "$cutscene_dir/../lib/facts.mjs" "$@" 2>/dev/null)
+cutscene_status=$?
+if [ "$cutscene_status" -ne 0 ] || [ -z "$cutscene_out" ]; then
+  unavailable "reading them failed"
+fi
+printf '%s\n' "$cutscene_out"
+exit 0

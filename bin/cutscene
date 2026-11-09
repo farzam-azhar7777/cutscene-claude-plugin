@@ -1,0 +1,30 @@
+#!/bin/sh
+//usr/bin/true; d=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd) && . "$d/../lib/find-node.sh" && n=$(cutscene_find_node) && exec "$n" "$0" "$@"; echo "cutscene needs Node 18 or newer. Install it from https://nodejs.org, or set CUTSCENE_NODE to its path." >&2; exit 1
+"use strict";
+
+// This file runs two ways. As a program, /bin/sh reads the line above: it
+// finds a Node 18+ (also when `node` is a version-manager shim with no version
+// for this folder) and runs this same file with it. Node skips the first line
+// and sees the second as a comment, so `node bin/cutscene` works too.
+
+// Kept as plain CommonJS so an old Node prints a clear message instead of a
+// syntax error from the ES modules in ../lib.
+const [major] = process.versions.node.split(".").map(Number);
+if (major < 18) {
+  process.stderr.write(`cutscene needs Node 18 or newer (this is ${process.versions.node}).\n`);
+  process.exit(1);
+}
+
+const path = require("node:path");
+const { pathToFileURL } = require("node:url");
+
+const entry = pathToFileURL(path.join(__dirname, "..", "lib", "cli.mjs")).href;
+import(entry)
+  .then(({ main }) => main(process.argv.slice(2)))
+  .then((code) => {
+    process.exitCode = code;
+  })
+  .catch((error) => {
+    process.stderr.write(`cutscene: unexpected error: ${error && error.message ? error.message : error}\n`);
+    process.exitCode = 1;
+  });
